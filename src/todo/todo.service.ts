@@ -12,12 +12,12 @@ export class TodoService {
     { id: 3, description: 'Piedra del Espacio', done: true },
   ];
 
-  create({ description }: CreateTodoDto): Todo{
+  create({ description }: CreateTodoDto): Todo {
     const todo = new Todo();
     todo.id = Math.max(...this.todos.map((todo) => todo.id), 0) + 1;
     todo.description = description;
-    this.todos.push(todo)
-    
+    this.todos.push(todo);
+
     return todo;
   }
 
@@ -33,7 +33,18 @@ export class TodoService {
   }
 
   update(id: number, updateTodoDto: UpdateTodoDto) {
-    return `This action updates a #${id} todo`;
+    const todo = this.findOne(id);
+
+    const { done, description } = updateTodoDto;
+    if (done !== undefined) todo.done = done;
+    if (description) todo.description = description;
+
+    this.todos.map((dbTodo) => {
+      if (dbTodo.id === id) return todo;
+      return dbTodo;
+    });
+
+    return todo;
   }
 
   remove(id: number) {
